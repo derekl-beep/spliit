@@ -81,7 +81,7 @@ const getDefaultSplittingOptions = (
     splitMode: 'EVENLY' as const,
     paidFor: group.participants.map(({ id }) => ({
       participant: id,
-      shares: 1,
+      shares: '1' as any, // String for consistent form handling
     })),
   }
 
@@ -113,7 +113,7 @@ const getDefaultSplittingOptions = (
     splitMode: parsedDefaultSplitMode.splitMode,
     paidFor: parsedDefaultSplitMode.paidFor.map((paidFor) => ({
       participant: paidFor.participant,
-      shares: paidFor.shares / 100,
+      shares: String(paidFor.shares / 100) as any, // Convert to string for consistent form handling
     })),
   }
 }
@@ -197,10 +197,9 @@ export function ExpenseForm({
           paidBy: expense.paidById,
           paidFor: expense.paidFor.map(({ participantId, shares }) => ({
             participant: participantId,
-            shares:
-              expense.splitMode === 'BY_AMOUNT'
-                ? amountAsDecimal(shares, groupCurrency)
-                : shares / 100,
+            shares: (expense.splitMode === 'BY_AMOUNT'
+              ? amountAsDecimal(shares, groupCurrency)
+              : String(shares / 100)) as any, // Convert from storage format (basis points) to display format as string
           })),
           splitMode: expense.splitMode,
           saveDefaultSplittingOptions: false,
@@ -226,7 +225,7 @@ export function ExpenseForm({
             searchParams.get('to')
               ? {
                   participant: searchParams.get('to')!,
-                  shares: 1,
+                  shares: '1' as any, // String for consistent form handling
                 }
               : undefined,
           ],
@@ -826,10 +825,10 @@ export function ExpenseForm({
                     : group.participants.map((p) => ({
                         participant: p.id,
                         shares:
-                          paidFor.find((pfor) => pfor.participant === p.id)
-                            ?.shares ?? 1,
+                          (paidFor.find((pfor) => pfor.participant === p.id)
+                            ?.shares ?? '1') as any, // String for consistent form handling
                       }))
-                  form.setValue('paidFor', newPaidFor, {
+                  form.setValue('paidFor', newPaidFor as any, {
                     shouldDirty: true,
                     shouldTouch: true,
                     shouldValidate: true,
@@ -886,9 +885,9 @@ export function ExpenseForm({
                                             ...field.value,
                                             {
                                               participant: id,
-                                              shares: 1,
+                                              shares: '1', // String for consistent form handling
                                             },
-                                          ],
+                                          ] as any,
                                           options,
                                         )
                                       : form.setValue(

@@ -194,14 +194,16 @@ export const expenseFormSchema = z
       ...expense,
       paidFor: expense.paidFor.map((paidFor) => {
         const shares = paidFor.shares
+        // Only transform string values (user input from form fields)
+        // Number values are already in the correct format from form initialization
         if (typeof shares === 'string' && expense.splitMode !== 'BY_AMOUNT') {
-          // For splitting not by amount, preserve the previous behaviour of multiplying the share by 100
+          // For splitting not by amount, multiply the user-entered share by 100
           return {
             ...paidFor,
             shares: Math.round(Number(shares) * 100),
           }
         }
-        // Otherwise, no need as the number will have been formatted according to currency.
+        // For numbers or BY_AMOUNT mode, convert to number without transformation
         return {
           ...paidFor,
           shares: Number(shares),
