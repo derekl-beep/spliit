@@ -81,7 +81,7 @@ const getDefaultSplittingOptions = (
     splitMode: 'EVENLY' as const,
     paidFor: group.participants.map(({ id }) => ({
       participant: id,
-      shares: "1", // Use string to ensure consistent schema handling
+      shares: "1" as any, // Use string to ensure consistent schema handling
     })),
   }
 
@@ -113,7 +113,7 @@ const getDefaultSplittingOptions = (
     splitMode: parsedDefaultSplitMode.splitMode,
     paidFor: parsedDefaultSplitMode.paidFor.map((paidFor) => ({
       participant: paidFor.participant,
-      shares: (paidFor.shares / 100).toString(), // Convert to string for consistent schema handling
+      shares: (paidFor.shares / 100).toString() as any, // Convert to string for consistent schema handling
     })),
   }
 }
@@ -197,10 +197,10 @@ export function ExpenseForm({
           paidBy: expense.paidById,
           paidFor: expense.paidFor.map(({ participantId, shares }) => ({
             participant: participantId,
-            shares:
-              expense.splitMode === 'BY_AMOUNT'
+            shares: 
+            (expense.splitMode === 'BY_AMOUNT'
                 ? amountAsDecimal(shares, groupCurrency)
-                : (shares / 100).toString(), // Convert to string to ensure consistent handling
+                : (shares / 100).toString()) as any, // Convert to string to ensure consistent handling
           })),
           splitMode: expense.splitMode,
           saveDefaultSplittingOptions: false,
@@ -226,7 +226,7 @@ export function ExpenseForm({
             searchParams.get('to')
               ? {
                   participant: searchParams.get('to')!,
-                  shares: 1,
+                  shares: '1' as any, // String for consistent form handling
                 }
               : undefined,
           ],
@@ -359,7 +359,7 @@ export function ExpenseForm({
           if (!editedParticipants.includes(participant.participant)) {
             return {
               ...participant,
-              shares: amountPerRemaining.toFixed(groupCurrency.decimal_digits), // Keep as string for consistent schema handling
+              shares: amountPerRemaining.toFixed(groupCurrency.decimal_digits) as any, // Keep as string for consistent schema handling
             }
           }
           return participant
@@ -824,10 +824,10 @@ export function ExpenseForm({
                     : group.participants.map((p) => ({
                         participant: p.id,
                         shares:
-                          paidFor.find((pfor) => pfor.participant === p.id)
-                            ?.shares ?? "1", // Use string to ensure consistent schema handling
+                          (paidFor.find((pfor) => pfor.participant === p.id)
+                            ?.shares ?? "1") as any, // Use string to ensure consistent schema handling
                       }))
-                  form.setValue('paidFor', newPaidFor, {
+                  form.setValue('paidFor', newPaidFor as any, {
                     shouldDirty: true,
                     shouldTouch: true,
                     shouldValidate: true,
@@ -886,7 +886,7 @@ export function ExpenseForm({
                                               participant: id,
                                               shares: "1", // Use string to ensure consistent schema handling
                                             },
-                                          ],
+                                          ] as any,
                                           options,
                                         )
                                       : form.setValue(
